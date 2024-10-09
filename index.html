@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Account Management System</title>
+      <link rel="stylesheet" href="style.css" />
+      <link
+         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+         rel="stylesheet"
+      />
+   </head>
+   <body>
+      <!-- Login Form -->
+
+      <div class="effect"></div>
+
+      <div class="nextUI" id="loginForm">
+         <div class="container">
+            <h2>Welcome Back</h2>
+            <form onsubmit="handleLogin(event)">
+               <div class="form-group">
+                  <label for="loginEmail">Email</label>
+                  <div class="input-icon">
+                     <i class="fas fa-envelope"></i>
+                     <input type="email" id="loginEmail" required placeholder="Enter your email" />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="loginPassword">Password</label>
+                  <div class="input-icon">
+                     <i class="fas fa-lock"></i>
+                     <input
+                        type="password"
+                        id="loginPassword"
+                        required
+                        placeholder="Enter your password"
+                     />
+                  </div>
+               </div>
+               <div class="form-group" id="mfaGroup" style="display: none">
+                  <label for="mfaCode">2FA Code</label>
+                  <div class="input-icon">
+                     <i class="fas fa-shield-alt"></i>
+                     <input type="text" id="mfaCode" placeholder="Enter 6-digit code" />
+                  </div>
+               </div>
+               <button type="submit">
+                  <i class="fas fa-sign-in-alt"></i>
+                  Login
+               </button>
+               <div class="switch-form">
+                  <a href="#" onclick="switchForm('register')">Don't have an account? Register</a>
+               </div>
+            </form>
+         </div>
+         <div class="image">
+            <img
+               src="https://images.unsplash.com/photo-1497005367839-6e852de72767?q=80&w=2067&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+               alt="Login"
+            />
+         </div>
+      </div>
+
+      <div class="nextUI" id="registerForm" style="display: none">
+         <!-- Register Form -->
+         <div class="container">
+            <h2>Create Account</h2>
+            <form onsubmit="handleRegister(event)">
+               <div class="form-group">
+                  <label for="registerUsername">Username</label>
+                  <div class="input-icon">
+                     <i class="fas fa-user"></i>
+                     <input
+                        type="text"
+                        id="registerUsername"
+                        required
+                        placeholder="Choose a username"
+                     />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="registerFullname">Full Name</label>
+                  <div class="input-icon">
+                     <i class="fas fa-id-card"></i>
+                     <input
+                        type="text"
+                        id="registerFullname"
+                        required
+                        placeholder="Enter your full name"
+                     />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="registerEmail">Email</label>
+                  <div class="input-icon">
+                     <i class="fas fa-envelope"></i>
+                     <input
+                        type="email"
+                        id="registerEmail"
+                        required
+                        placeholder="Enter your email"
+                     />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="registerPassword">Password</label>
+                  <div class="input-icon">
+                     <i class="fas fa-lock"></i>
+                     <input
+                        type="password"
+                        id="registerPassword"
+                        required
+                        placeholder="Create a password"
+                     />
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="registerBirthdate">Birth Date</label>
+                  <div class="input-icon">
+                     <i class="fas fa-calendar"></i>
+                     <input type="date" id="registerBirthdate" required />
+                  </div>
+               </div>
+               <button type="submit">
+                  <i class="fas fa-user-plus"></i>
+                  Register
+               </button>
+               <div class="switch-form">
+                  <a href="#" onclick="switchForm('login')">Already have an account? Login</a>
+               </div>
+            </form>
+         </div>
+         <div class="image">
+            <img
+               src="https://images.unsplash.com/photo-1497005367839-6e852de72767?q=80&w=2067&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+               alt="Register"
+            />
+         </div>
+      </div>
+
+      <!-- Dashboard -->
+      <div ="container dashboard" id="dashboard" style="display: none">
+         <div class="dashboard-nav">
+            <button onclick="showSection('profile')">
+               <i class="fas fa-user"></i>
+               Profile
+            </button>
+            <button onclick="showSection('security')">
+               <i class="fas fa-shield-alt"></i>
+               Security
+            </button>
+            <button onclick="handleLogout()" style="background: #ef4444">
+               <i class="fas fa-sign-out-alt"></i>
+               Logout
+            </button>
+         </div>
+
+         <!-- Profile Section -->
+         <div class="dashboard-section" id="profileSection">
+            <div class="card">
+               <div class="card-header">
+                  <i class="fas fa-user-circle"></i>
+                  <h3>Profile Settings</h3>
+               </div>
+               <form onsubmit="handleProfileUpdate(event)">
+                  <div class="form-group">
+                     <label for="updateUsername">Username</label>
+                     <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="updateUsername" />
+                     </div>
+                  </div>
+                  <div class="form-group">
+                     <label for="updateFullname">Full Name</label>
+                     <div class="input-icon">
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" id="updateFullname" />
+                     </div>
+                  </div>
+                  <div class="form-group">
+                     <label for="updateBirthdate">Birth Date</label>
+                     <div class="input-icon">
+                        <i class="fas fa-calendar"></i>
+                        <input type="date" id="updateBirthdate" />
+                     </div>
+                  </div>
+                  <button type="submit">
+                     <i class="fas fa-save"></i>
+                     Update Profile
+                  </button>
+               </form>
+            </div>
+         </div>
+
+         <!-- Security Section -->
+         <div class="dashboard-section" id="securitySection">
+            <!-- Change Password Card -->
+            <div class="card">
+               <div class="card-header">
+                  <i class="fas fa-key"></i>
+                  <h3>Change Password</h3>
+               </div>
+               <form onsubmit="handlePasswordChange(event)">
+                  <div class="form-group">
+                     <label for="currentPassword">Current Password</label>
+                     <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                        <input
+                           type="password"
+                           id="currentPassword"
+                           placeholder="Enter current password"
+                        />
+                     </div>
+                  </div>
+                  <div class="form-group">
+                     <label for="newPassword">New Password</label>
+                     <div class="input-icon">
+                        <i class="fas fa-key"></i>
+                        <input type="password" id="newPassword" placeholder="Enter new password" />
+                     </div>
+                  </div>
+                  <button type="submit">
+                     <i class="fas fa-save"></i>
+                     Change Password
+                  </button>
+               </form>
+            </div>
+
+            <!-- 2FA Card -->
+            <div class="card">
+               <div class="card-header">
+                  <i class="fas fa-shield-alt"></i>
+                  <h3>Two-Factor Authentication</h3>
+               </div>
+               <div id="twoFactorSetup">
+                  <div id="enableTwoFactor" style="display: none">
+                     <p class="mb-4" style="color: var(--text-secondary); margin-bottom: 1.5rem">
+                        Enhance your account security by enabling two-factor authentication.
+                     </p>
+                     <button onclick="setupTwoFactor()">
+                        <i class="fas fa-plus-circle"></i>
+                        Enable 2FA
+                     </button>
+                  </div>
+
+                  <div id="twoFactorFlow" style="display: none">
+                     <div id="qrStep">
+                        <div class="qr-container">
+                           <img id="qrCode" alt="QR Code" src="" />
+                        </div>
+                        <p
+                           style="
+                              color: var(--text-secondary);
+                              margin-bottom: 1.5rem;
+                              text-align: center;
+                           "
+                        >
+                           Scan this QR code with your authenticator app (like Google Authenticator)
+                        </p>
+                        <button onclick="showVerifyCode()">
+                           <i class="fas fa-arrow-right"></i>
+                           Next Step
+                        </button>
+                     </div>
+
+                     <div id="verifyStep" style="display: none">
+                        <div class="form-group">
+                           <label for="verificationCode">Verification Code</label>
+                           <div class="input-icon">
+                              <i class="fas fa-key"></i>
+                              <input
+                                 type="text"
+                                 id="verificationCode"
+                                 placeholder="Enter 6-digit code"
+                              />
+                           </div>
+                        </div>
+                        <button onclick="verifyTwoFactor()">
+                           <i class="fas fa-check-circle"></i>
+                           Verify and Enable
+                        </button>
+                     </div>
+                  </div>
+
+                  <div id="disableTwoFactor" style="display: none">
+                     <div class="badge badge-success" style="margin-bottom: 1.5rem">
+                        <i class="fas fa-check-circle"></i>
+                        <span style="margin-left: 0.5rem">2FA is currently enabled</span>
+                     </div>
+                     <button onclick="disableTwoFactor()" style="background: #ef4444">
+                        <i class="fas fa-shield-alt"></i>
+                        Disable 2FA
+                     </button>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- Toast Notification -->
+      <div class="toast" id="toast">
+         <i class="fas"></i>
+         <span id="toastMessage"></span>
+      </div>
+
+      <script src="app.js"></script>
+   </body>
+</html>
