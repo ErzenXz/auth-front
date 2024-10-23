@@ -20,19 +20,30 @@ function switchForm(form) {
   document.getElementById("registerForm").style.display =
     form === "register" ? "block" : "none";
   document.getElementById("dashboard").style.display =
-    form === "dashboard" ? "block" : "none";
+    form === "dashboard" ? "flex" : "none";
 }
 
 function showSection(section) {
-  document
-    .querySelectorAll(".dashboard-section")
-    .forEach((s) => (s.style.display = "none"));
+  // Remove active class from all nav items
+  document.querySelectorAll(".nav-item").forEach((item) => {
+    item.classList.remove("active");
+  });
+
+  // Add active class to clicked nav item
+  document.querySelector(`[href="#${section}"]`).classList.add("active");
+
+  // Hide all sections
+  document.querySelectorAll(".dashboard-section").forEach((s) => {
+    s.style.display = "none";
+  });
+
+  // Show selected section
   document.getElementById(`${section}Section`).style.display = "block";
 }
 
 function handleLogout() {
   localStorage.removeItem("token");
-  switchForm("login");
+  window.location.href = "/login";
 }
 
 // Profile management
