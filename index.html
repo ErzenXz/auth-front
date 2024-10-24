@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Account Management System</title>
+    <title>TrustPort - Login</title>
     <link rel="stylesheet" href="style.css" />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -15,6 +15,16 @@
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap"
       rel="stylesheet"
     />
+
+    <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="TrustPort" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<script src="https://cdn.jsdelivr.net/npm/ua-parser-js/dist/ua-parser.min.js"></script>
+
   </head>
   <body>
     <!-- Login Form -->
@@ -164,9 +174,9 @@
     <div class="dashboard" id="dashboard" style="display: none">
       <div class="dashboard-sidebar">
         <div class="sidebar-header">
-          <img src="https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg" alt="Profile" />
-          <h3>Welcome, Erzen</h3>
-          <p>Premium Account</p>
+          <img id="userImage" src="https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg" alt="Profile" />
+          <h3 id="userName">Welcome, Erzen</h3>
+          <p id="userRole">Premium Account</p>
         </div>
         <div class="sidebar-nav">
           <a
@@ -193,7 +203,10 @@
             <i class="fas fa-lock"></i>
             Privacy
           </a>
-          <a
+          <a href="#connectedApps" class="nav-item" onclick="showSection('connectedApps')">
+            <i class="fas fa-cube"></i>
+            Apps
+          </a>          <a
             href="#developer"
             class="nav-item"
             onclick="showSection('developer')"
@@ -204,7 +217,7 @@
           <button
             class="nav-item"
             onclick="handleLogout()"
-            style="margin-top: auto; color: #ff3b30"
+            style="margin-top: 30px; width: 100%"
           >
             <i class="fas fa-sign-out-alt"></i>
             Sign Out
@@ -223,23 +236,23 @@
             </div>
             <div class="stat-card">
               <h3>Last Login</h3>
-              <div class="value" style="font-size: 1.2rem">2 hours ago</div>
+              <div class="value" id="lastLogin" style="font-size: 1.2rem">2 hours ago</div>
             </div>
             <div class="stat-card">
               <h3>Security Score</h3>
-              <div class="value">92%</div>
+              <div class="value" id="securityScore">92%</div>
             </div>
           </div>
 
           <h2 class="section-title">Connected Devices</h2>
-          <div class="oauth-apps">
+          <div class="oauth-apps" id="connectedDevices">
             <div class="app-card">
               <div class="app-icon">
                 <i class="fas fa-laptop"></i>
               </div>
               <div class="app-info">
-                <h4>MacBook Pro</h4>
-                <p>Last active: 2 minutes ago • New York, USA</p>
+                <h4>----</h4>
+                <p>-----------</p>
               </div>
               <div class="app-actions">
                 <button class="btn btn-secondary">Details</button>
@@ -250,8 +263,8 @@
                 <i class="fas fa-mobile-alt"></i>
               </div>
               <div class="app-info">
-                <h4>iPhone 12</h4>
-                <p>Last active: 1 hour ago • New York, USA</p>
+                <h4>----</h4>
+                <p>-----------</p>
               </div>
               <div class="app-actions">
                 <button class="btn btn-secondary">Details</button>
@@ -294,7 +307,7 @@
                 <label for="updateProfilePhoto">Profile Photo</label>
                 <input type="file" id="updateProfilePhoto" />
               </div>
-              <button type="submit">
+              <button type="submit" style="align-self: flex-end;">
                 <i class="fas fa-save"></i>
                 Update Profile
               </button>
@@ -417,49 +430,107 @@
           </div>
         </div>
 
-        <!-- Developer Section -->
-        <div
-          class="dashboard-section"
-          id="developerSection"
-          style="display: none"
-        >
-          <h1 class="section-title">Developer Settings</h1>
-          <button class="create-app">
-            <i class="fas fa-plus"></i>
-            Create New Application
-          </button>
-
-          <div class="oauth-apps">
-            <div class="app-card">
-              <div class="app-icon">
-                <i class="fas fa-cube"></i>
-              </div>
-              <div class="app-info">
-                <h4>Test Application</h4>
-                <p>Client ID: 123456 • Created 2 months ago</p>
-              </div>
-              <div class="app-actions">
-                <button class="btn btn-secondary">Edit</button>
-                <button class="btn btn-primary">View Keys</button>
-              </div>
-            </div>
-
-            <div class="app-card">
-              <div class="app-icon">
-                <i class="fas fa-cube"></i>
-              </div>
-              <div class="app-info">
-                <h4>Production App</h4>
-                <p>Client ID: 789012 • Created 5 months ago</p>
-              </div>
-              <div class="app-actions">
-                <button class="btn btn-secondary">Edit</button>
-                <button class="btn btn-primary">View Keys</button>
-              </div>
-            </div>
+        <!-- Privacy Section -->
+<div class="dashboard-section" id="privacySection" style="display: none">
+  <h1 class="section-title">Privacy Settings</h1>
+  <div class="card">
+    <form onsubmit="handlePrivacySettings(event)">
+      <div class="form-group">
+        <label>Profile Visibility</label>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" id="public" name="visibility" value="public">
+            <label for="public">
+              <i class="fas fa-globe"></i>
+              Public - Anyone can view your profile
+            </label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="private" name="visibility" value="private">
+            <label for="private">
+              <i class="fas fa-lock"></i>
+              Private - Only approved connections
+            </label>
           </div>
         </div>
       </div>
+      
+      <div class="form-group">
+        <label>Email Preferences</label>
+        <div class="checkbox-group">
+          <div class="checkbox-option">
+            <input type="checkbox" id="marketingEmails">
+            <label for="marketingEmails">Receive marketing emails</label>
+          </div>
+          <div class="checkbox-option">
+            <input type="checkbox" id="securityAlerts">
+            <label for="securityAlerts">Security alerts</label>
+          </div>
+          <div class="checkbox-option">
+            <input type="checkbox" id="loginAlerts">
+            <label for="loginAlerts">Login alerts</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Data Usage</label>
+        <div class="checkbox-group">
+          <div class="checkbox-option">
+            <input type="checkbox" id="dataAnalytics">
+            <label for="dataAnalytics">Allow anonymous data collection for service improvement</label>
+          </div>
+          <div class="checkbox-option">
+            <input type="checkbox" id="thirdPartySharing">
+            <label for="thirdPartySharing">Share data with trusted partners</label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" style="align-self: flex-end;">
+        <i class="fas fa-save"></i>
+        Save Privacy Settings
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Connected Apps Section -->
+<div class="dashboard-section" id="connectedAppsSection" style="display: none">
+  <h1 class="section-title">Connected Applications</h1>
+  <p class="section-description">Applications that have access to your account</p>
+  <br>
+
+  <div class="oauth-apps" id="oauthAppsList">
+      
+</div>
+
+
+      </div>
+
+              <!-- Developer Section -->
+              <div
+              class="dashboard-section"
+              id="developerSection"
+              style="display: none"
+            >
+              <h1 class="section-title">Developer Settings</h1>
+              <button class="create-app" style="margin-left: auto;">
+                <i class="fas fa-plus"></i>
+                Create New Application
+              </button>
+    
+              <div class="oauth-apps" id="oauthApps">
+
+              </div>
+
+
+            </div>
+    </div>
+
+
+    <div id="loadingScreen">
+      <div class="loading-spinner"></div>
     </div>
 
     <!-- Toast Notification -->
@@ -468,6 +539,7 @@
       <span id="toastMessage"></span>
     </div>
 
+    <script src="developers-page.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

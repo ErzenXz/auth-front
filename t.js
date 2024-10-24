@@ -21,6 +21,12 @@ function switchForm(form) {
     form === "register" ? "block" : "none";
   document.getElementById("dashboard").style.display =
     form === "dashboard" ? "flex" : "none";
+
+  if (form === "dashboard") {
+    document.title = "TrustPort - Dashboard";
+  } else {
+    document.title = "TrustPort - Login";
+  }
 }
 
 function showSection(section) {
@@ -38,7 +44,7 @@ function showSection(section) {
   });
 
   // Show selected section
-  document.getElementById(`${section}Section`).style.display = "flex";
+  document.getElementById(`${section}Section`).style.display = "block";
 }
 
 function handleLogout() {
