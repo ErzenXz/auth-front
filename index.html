@@ -44,6 +44,7 @@
                   id="loginEmail"
                   required
                   placeholder="Enter your email"
+                  autocomplete="email"
                 />
               </div>
             </div>
@@ -56,6 +57,7 @@
                   id="loginPassword"
                   required
                   placeholder="Enter your password"
+                  autocomplete="current-password"
                 />
               </div>
             </div>
@@ -67,6 +69,7 @@
                   type="text"
                   id="mfaCode"
                   placeholder="Enter 6-digit code"
+                  autocomplete="off"
                 />
               </div>
             </div>
@@ -104,6 +107,7 @@
                   id="registerUsername"
                   required
                   placeholder="Choose a username"
+                  autocomplete="username"
                 />
               </div>
             </div>
@@ -116,6 +120,7 @@
                   id="registerFullname"
                   required
                   placeholder="Enter your full name"
+                  autocomplete="name"
                 />
               </div>
             </div>
@@ -128,6 +133,7 @@
                   id="registerEmail"
                   required
                   placeholder="Enter your email"
+                  autocomplete="email"
                 />
               </div>
             </div>
@@ -140,6 +146,7 @@
                   id="registerPassword"
                   required
                   placeholder="Create a password"
+                  autocomplete="new-password"
                 />
               </div>
             </div>
@@ -147,7 +154,7 @@
               <label for="registerBirthdate">Birth Date</label>
               <div class="input-icon">
                 <i class="fas fa-calendar"></i>
-                <input type="date" id="registerBirthdate" required />
+                <input type="date" id="registerBirthdate" autocomplete="bday" required />
               </div>
             </div>
             <button type="submit">
@@ -273,158 +280,317 @@
           </div>
         </div>
 
-        <!-- Profile Section -->
-        <div
-          class="dashboard-section"
-          id="profileSection"
-          style="display: none"
-        >
-          <h1 class="section-title">My Profile</h1>
-          <div class="card">
-            <form onsubmit="handleProfileUpdate(event)">
-              <div class="form-group">
-                <label for="updateUsername">Username</label>
-                <div class="input-icon">
-                  <i class="fas fa-user"></i>
-                  <input type="text" id="updateUsername" disabled />
+        <div class="dashboard-section profile-container" id="profileSection" style="display: none">
+          <div class="profile-header">
+            <div class="cover-photo">
+              <div class="profile-photo-wrapper">
+                <img id="userPhoto2" src="/api/placeholder/150/150" alt="Profile Photo" class="profile-photo" />
+                <label for="updateProfilePhoto" class="photo-upload-label">
+                  <i class="fas fa-camera"></i>
+                </label>
+                <input type="file" id="updateProfilePhoto" class="hidden-input" />
+              </div>
+            </div>
+            
+            <div class="profile-info-bar">
+              <h1 class="profile-name" id="userName2">John Doe</h1>
+              <div class="profile-stats">
+                <div class="stat-item">
+                  <span class="stat-value">2.5K</span>
+                  <span class="stat-label">Following</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-value">10.8K</span>
+                  <span class="stat-label">Followers</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-value">156</span>
+                  <span class="stat-label">Posts</span>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="updateFullname">Full Name</label>
-                <div class="input-icon">
-                  <i class="fas fa-id-card"></i>
-                  <input type="text" id="updateFullname" />
+            </div>
+          </div>
+        
+          <div class="profile-content">
+            <form class="profile-form" onsubmit="handleProfileUpdate(event)">
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="updateUsername">
+                    <i class="fas fa-at"></i>
+                    Username
+                  </label>
+                  <input 
+                    type="text" 
+                    id="updateUsername" 
+                    disabled 
+                    value="johndoe"
+                    class="modern-input"
+                  />
+                </div>
+                
+                <div class="form-field">
+                  <label for="updateFullname">
+                    <i class="fas fa-user"></i>
+                    Full Name
+                  </label>
+                  <input 
+                    type="text" 
+                    id="updateFullname" 
+                    class="modern-input"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+        
+                <div class="form-field">
+                  <label for="updateBio">
+                    <i class="fas fa-quote-left"></i>
+                    Bio
+                  </label>
+                  <textarea 
+                    id="updateBio" 
+                    class="modern-input"
+                    placeholder="Tell us about yourself..."
+                    rows="3"
+                  ></textarea>
+                </div>
+        
+                <div class="form-field">
+                  <label for="updateBirthdate">
+                    <i class="fas fa-birthday-cake"></i>
+                    Birth Date
+                  </label>
+                  <input 
+                    type="date" 
+                    id="updateBirthdate" 
+                    class="modern-input"
+                  />
                 </div>
               </div>
-              <div class="form-group">
-                <label for="updateBirthdate">Birth Date</label>
-                <div class="input-icon">
-                  <i class="fas fa-calendar"></i>
-                  <input type="date" id="updateBirthdate" />
-                </div>
+        
+              <div class="profile-badges">
+                <span class="badge">
+                  <i class="fas fa-check-circle"></i>
+                  Verified
+                </span>
+                <span class="badge">
+                  <i class="fas fa-star"></i>
+                  Premium
+                </span>
+                <span class="badge">
+                  <i class="fas fa-shield-alt"></i>
+                  Secured
+                </span>
               </div>
-              <div class="form-group">
-                <label for="updateProfilePhoto">Profile Photo</label>
-                <input type="file" id="updateProfilePhoto" />
-              </div>
-              <button type="submit" style="align-self: flex-end;">
+        
+              <button type="submit" class="save-profile-btn">
                 <i class="fas fa-save"></i>
-                Update Profile
+                Save Changes
               </button>
             </form>
           </div>
         </div>
+        
 
-        <!-- Security Section -->
-        <div
-          class="dashboard-section"
-          id="securitySection"
-          style="display: none"
-        >
-          <h1 class="section-title">Security Settings</h1>
-          <!-- Change Password Card -->
-          <div class="card">
-            <form onsubmit="handlePasswordChange(event)">
-              <div class="form-group">
-                <label for="currentPassword">Current Password</label>
-                <div class="input-icon">
-                  <i class="fas fa-lock"></i>
-                  <input
-                    type="password"
-                    id="currentPassword"
-                    placeholder="Enter current password"
+        <div class="dashboard-section security-container" id="securitySection" style="display: none">
+          <div class="security-header">
+            <h1 class="section-title">Security Settings</h1>
+            <div class="security-overview">
+              <div class="security-score">
+                <svg viewBox="0 0 36 36" class="security-score-circle">
+                  <path
+                    d="M18 2.0845
+                      a 15.9155 15.9155 0 0 1 0 31.831
+                      a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#e5e7eb"
+                    stroke-width="3"
                   />
+                  <path
+                    d="M18 2.0845
+                      a 15.9155 15.9155 0 0 1 0 31.831
+                      a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#10b981"
+                    stroke-width="3"
+                    stroke-dasharray="75, 100"
+                  />
+                </svg>
+                <div class="score-content">
+                  <span class="score-value">75%</span>
+                  <span class="score-label">Score</span>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="newPassword">New Password</label>
-                <div class="input-icon">
+              <div class="security-recommendations">
+                <div class="recommendation-item">
+                  <i class="fas fa-check-circle text-success"></i>
+                  <span>Strong password</span>
+                </div>
+                <div class="recommendation-item">
+                  <i class="fas fa-check-circle text-success"></i>
+                  <span>2FA enabled</span>
+                </div>
+                <div class="recommendation-item warning">
+                  <i class="fas fa-exclamation-circle"></i>
+                  <span>Recovery email needed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        
+          <div class="security-grid">
+            <!-- Password Change Card -->
+            <div class="security-card">
+              <div class="card-header">
+                <div class="card-title">
                   <i class="fas fa-key"></i>
-                  <input
-                    type="password"
-                    id="newPassword"
-                    placeholder="Enter new password"
-                  />
+                  <h2>Password</h2>
                 </div>
+                <span class="last-updated">Last changed 30 days ago</span>
               </div>
-              <button type="submit">
-                <i class="fas fa-save"></i>
-                Change Password
-              </button>
-            </form>
-          </form>
+              
+              <form class="password-form" onsubmit="handlePasswordChange(event)">
+                <div class="form-field">
+                  <label for="currentPassword">Current Password</label>
+                  <div class="input-wrapper">
+                    <input
+                      type="password"
+                      id="currentPassword"
+                      class="security-input"
+                      placeholder="Enter current password"
+                      autocomplete="current-password"
+                      required
+                    />
 
-          <br>
-
-            <div id="twoFactorSetup">
-              <div id="enableTwoFactor" style="display: none">
-                <p
-                  class="mb-4"
-                  style="color: var(--text-secondary); margin-bottom: 1.5rem"
-                >
-                  Enhance your account security by enabling two-factor
-                  authentication.
-                </p>
-                <button onclick="setupTwoFactor()">
-                  <i class="fas fa-plus-circle"></i>
-                  Enable 2FA
-                </button>
-              </div>
-
-              <div id="twoFactorFlow" style="display: none">
-                <div id="qrStep">
-                  <div class="qr-container">
-                    <img id="qrCode" alt="QR Code" src="" />
                   </div>
-                  <p
-                    style="
-                      color: var(--text-secondary);
-                      margin-bottom: 1.5rem;
-                      text-align: center;
-                    "
-                  >
-                    Scan this QR code with your authenticator app (like Google
-                    Authenticator)
-                  </p>
-                  <button onclick="showVerifyCode()">
-                    <i class="fas fa-arrow-right"></i>
-                    Next Step
-                  </button>
                 </div>
+        
+                <div class="form-field">
+                  <label for="newPassword">New Password</label>
+                  <div class="input-wrapper">
+                    <input
+                      type="password"
+                      id="newPassword"
+                      class="security-input"
+                      placeholder="Enter new password"
+                      autocomplete="new-password"
+                      required
+              
 
-                <div id="verifyStep" style="display: none">
-                  <div class="form-group">
-                    <label for="verificationCode">Verification Code</label>
-                    <div class="input-icon">
-                      <i class="fas fa-key"></i>
-                      <input
-                        type="text"
-                        id="verificationCode"
-                        placeholder="Enter 6-digit code"
-                      />
+                    />
+
+                  </div>
+                  <div class="password-strength">
+                    <div class="strength-meter">
+                      <div class="strength-segment"></div>
+                      <div class="strength-segment"></div>
+                      <div class="strength-segment"></div>
+                      <div class="strength-segment"></div>
                     </div>
+                    <span class="strength-label">Password strength: Medium</span>
                   </div>
-                  <button onclick="verifyTwoFactor()">
-                    <i class="fas fa-check-circle"></i>
-                    Verify and Enable
-                  </button>
+                  <ul class="password-requirements">
+                    <li class="requirement met"><i class="fas fa-check"></i> At least 8 characters</li>
+                    <li class="requirement met"><i class="fas fa-check"></i> Contains numbers</li>
+                    <li class="requirement"><i class="fas fa-times"></i> Contains special characters</li>
+                    <li class="requirement"><i class="fas fa-times"></i> Contains uppercase letters</li>
+                  </ul>
+                </div>
+        
+                <button type="submit" class="security-button">
+                  <i class="fas fa-save"></i>
+                  <span>Update Password</span>
+                </button>
+              </form>
+            </div>
+        
+            <!-- Two-Factor Authentication Card -->
+            <div class="security-card">
+              <div class="card-header">
+                <div class="card-title">
+                  <i class="fas fa-shield-alt"></i>
+                  <h2>Two-Factor Authentication</h2>
+                </div>
+                <div class="status-badge" id="2faStatus" data-enabled="true">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Enabled</span>
                 </div>
               </div>
-
-              <div id="disableTwoFactor" style="display: none">
-                <div class="badge badge-success" style="margin-bottom: 1.5rem">
-                  <i class="fas fa-check-circle"></i>
-                  <span style="margin-left: 0.5rem"
-                    >2FA is currently enabled</span
-                  >
+        
+              <div id="twoFactorSetup" class="two-factor-content">
+                <!-- Enable 2FA State -->
+                <div id="enableTwoFactor" class="setup-state">
+                  <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Enhance your account security by enabling two-factor authentication. This adds an extra layer of protection to your account.</p>
+                  </div>
+                  <button class="security-button" onclick="setupTwoFactor()" id="secButton">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Enable 2FA</span>
+                  </button>
+                  <br>
                 </div>
-                <button
-                  onclick="disableTwoFactor()"
-                  style="background: #ef4444"
-                >
-                  <i class="fas fa-shield-alt"></i>
-                  Disable 2FA
-                </button>
+        
+                <!-- QR Code Setup State -->
+                <div id="twoFactorFlow" class="setup-state">
+                  <div id="qrStep" class="qr-setup">
+                    <div class="qr-container">
+                      <img id="qrCode" alt="QR Code for 2FA setup" src="/api/placeholder/200/200" />
+                    </div>
+                    <br>
+                    <div class="setup-instructions">
+                      <h3>Set up authenticator app</h3>
+                      <ol class="instruction-steps">
+                        <li>Install an authenticator app like Google Authenticator</li>
+                        <li>Open the app and scan this QR code</li>
+                        <li>Enter the verification code shown in your app</li>
+                      </ol>
+                    </div>
+                    <button class="security-button" onclick="showVerifyCode()">
+                      <i class="fas fa-arrow-right"></i>
+                      <span>Continue</span>
+                    </button>
+                    <br>
+                  </div>
+        
+                  <!-- Verification State -->
+                  <div id="verifyStep" class="verify-setup">
+                    <div class="form-field">
+                      <label for="verificationCode">Enter Verification Code</label>
+                      <div class="code-input-group">
+                        <input type="text" maxlength="1" class="code-input" pattern="\d" required />
+                        <input type="text" maxlength="1" class="code-input" pattern="\d" required />
+                        <input type="text" maxlength="1" class="code-input" pattern="\d" required />
+                        <input type="text" maxlength="1" class="code-input" pattern="\d" required />
+                        <input type="text" maxlength="1" class="code-input" pattern="\d" required />
+                        <input type="text" maxlength="1" class="code-input" pattern="\d" required />
+                      </div>
+
+                    </div>
+                    <button class="security-button" onclick="verifyTwoFactor()">
+                      <i class="fas fa-check-circle"></i>
+                      <span>Verify and Enable</span>
+                    </button>
+                  </div>
+                </div>
+        
+                <!-- 2FA Enabled State -->
+                <div id="disableTwoFactor" class="setup-state">
+                  <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Two-factor authentication is enabled on your account. This adds an extra layer of security to your account.</p>
+                  </div>
+                  <div class="danger-zone">
+                    <h3>Danger Zone</h3>
+                    <div class="info-box">
+                      <i class="fas fa-exclamation-triangle"></i>
+                      <p>Disabling 2FA will make your account less secure. Only disable if you are sure.</p>
+                    </div>
+                    <button class="security-button danger" onclick="disableTwoFactor()">
+                      <i class="fas fa-shield-alt"></i>
+                      <span>Disable 2FA</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -432,66 +598,121 @@
 
         <!-- Privacy Section -->
 <div class="dashboard-section" id="privacySection" style="display: none">
-  <h1 class="section-title">Privacy Settings</h1>
+  <!-- <h1 class="section-title">Privacy Settings</h1> -->
   <div class="card">
-    <form onsubmit="handlePrivacySettings(event)">
-      <div class="form-group">
-        <label>Profile Visibility</label>
-        <div class="radio-group">
-          <div class="radio-option">
-            <input type="radio" id="public" name="visibility" value="public">
-            <label for="public">
-              <i class="fas fa-globe"></i>
-              Public - Anyone can view your profile
-            </label>
-          </div>
-          <div class="radio-option">
-            <input type="radio" id="private" name="visibility" value="private">
-            <label for="private">
-              <i class="fas fa-lock"></i>
-              Private - Only approved connections
-            </label>
-          </div>
-        </div>
-      </div>
+    <div class="privacy">
+      <h1>Privacy Settings</h1>
       
-      <div class="form-group">
-        <label>Email Preferences</label>
-        <div class="checkbox-group">
-          <div class="checkbox-option">
-            <input type="checkbox" id="marketingEmails">
-            <label for="marketingEmails">Receive marketing emails</label>
+      <div class="privacy-banner">
+          <i class="fas fa-shield-alt"></i>
+          <div>
+              <strong>Your privacy matters!</strong> Review and update your privacy settings to control how your information is shared and used.
           </div>
-          <div class="checkbox-option">
-            <input type="checkbox" id="securityAlerts">
-            <label for="securityAlerts">Security alerts</label>
-          </div>
-          <div class="checkbox-option">
-            <input type="checkbox" id="loginAlerts">
-            <label for="loginAlerts">Login alerts</label>
-          </div>
-        </div>
       </div>
-
-      <div class="form-group">
-        <label>Data Usage</label>
-        <div class="checkbox-group">
-          <div class="checkbox-option">
-            <input type="checkbox" id="dataAnalytics">
-            <label for="dataAnalytics">Allow anonymous data collection for service improvement</label>
+  
+      <div class="privacy-section">
+          <h2><i class="fas fa-user-shield"></i>Profile Visibility</h2>
+          <div class="privacy-option">
+              <div class="privacy-option-info">
+                  <div class="privacy-option-title">Profile Visibility</div>
+                  <div class="privacy-option-description">Control who can view your profile information</div>
+              </div>
+              <select class="privacy-select" id="profileVisibility">
+                  <option value="PUBLIC">Public - Anyone can view</option>
+                  <option value="FRIENDS">Connections Only</option>
+                  <option value="PRIVATE">Private - Only you</option>
+              </select>
           </div>
-          <div class="checkbox-option">
-            <input type="checkbox" id="thirdPartySharing">
-            <label for="thirdPartySharing">Share data with trusted partners</label>
+          <div class="privacy-option">
+              <div class="privacy-option-info">
+                  <div class="privacy-option-title">Activity Status</div>
+                  <div class="privacy-option-description">Show when you're active on the platform</div>
+              </div>
+              <label class="privacy-toggle">
+                  <input type="checkbox" id="activeStatus">
+                  <span class="privacy-toggle-slider"></span>
+              </label>
           </div>
-        </div>
       </div>
-
-      <button type="submit" style="align-self: flex-end;">
-        <i class="fas fa-save"></i>
-        Save Privacy Settings
-      </button>
-    </form>
+  
+      <div class="privacy-section">
+          <h2><i class="fas fa-envelope"></i>Communication Preferences</h2>
+          <div class="privacy-option">
+              <div class="privacy-option-info">
+                  <div class="privacy-option-title">Marketing Emails</div>
+                  <div class="privacy-option-description">Receive updates about new features and promotions</div>
+              </div>
+              <label class="privacy-toggle">
+                  <input type="checkbox" id="emailMarketing">
+                  <span class="privacy-toggle-slider"></span>
+              </label>
+          </div>
+          <div class="privacy-option">
+              <div class="privacy-option-info">
+                  <div class="privacy-option-title">Security Alerts</div>
+                  <div class="privacy-option-description">Get notified about important security updates</div>
+              </div>
+              <label class="privacy-toggle">
+                  <input type="checkbox" id="securityAlerts">
+                  <span class="privacy-toggle-slider"></span>
+              </label>
+          </div>
+          <div class="privacy-option">
+              <div class="privacy-option-info">
+                  <div class="privacy-option-title">Login Notifications</div>
+                  <div class="privacy-option-description">Receive alerts when your account is accessed from a new device</div>
+              </div>
+              <label class="privacy-toggle">
+                  <input type="checkbox" id="loginAlerts">
+                  <span class="privacy-toggle-slider"></span>
+              </label>
+          </div>
+      </div>
+  
+      <div class="privacy-section">
+          <h2><i class="fas fa-database"></i>Data Usage</h2>
+          <div class="privacy-option">
+              <div class="privacy-option-info">
+                  <div class="privacy-option-title">Analytics Collection</div>
+                  <div class="privacy-option-description">Allow anonymous data collection to improve our services</div>
+              </div>
+              <label class="privacy-toggle">
+                  <input type="checkbox" id="anonymousUsage">
+                  <span class="privacy-toggle-slider"></span>
+              </label>
+          </div>
+          <div class="privacy-option">
+              <div class="privacy-option-info">
+                  <div class="privacy-option-title">Third-Party Data Sharing</div>
+                  <div class="privacy-option-description">Share data with trusted partners for service improvement</div>
+              </div>
+              <label class="privacy-toggle">
+                  <input type="checkbox" id="thirdPartyAds">
+                  <span class="privacy-toggle-slider"></span>
+              </label>
+          </div>
+          <div class="privacy-option">
+              <div class="privacy-option-info">
+                  <div class="privacy-option-title">Personalized Ads</div>
+                  <div class="privacy-option-description">Allow data usage for personalized advertising</div>
+              </div>
+              <label class="privacy-toggle">
+                  <input type="checkbox" id="personalizedAds">
+                  <span class="privacy-toggle-slider"></span>
+              </label>
+          </div>
+      </div>
+  
+      <div class="privacy-footer">
+          <div class="privacy-footer-text">
+              Last updated: October 25, 2024
+          </div>
+          <button class="privacy-save-btn" onclick="savePrivacySettings()">
+              <i class="fas fa-save"></i>
+              Save Changes
+          </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -539,7 +760,9 @@
       <span id="toastMessage"></span>
     </div>
 
+    <script src="toast.js"></script>
     <script src="developers-page.js"></script>
+    <script src="privacy-page.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

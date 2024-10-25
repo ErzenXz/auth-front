@@ -29,6 +29,10 @@ async function initializeDeveloperSection() {
 // Render the applications list
 function renderApplications(apps) {
   const container = document.getElementById("oauthApps");
+  if (apps.length === 0) {
+    container.innerHTML = "<p>You don't have any created apps.</p>";
+    return;
+  }
   container.innerHTML = apps
     .map(
       (app) => `
@@ -90,6 +94,12 @@ function showCreateModal() {
                         <label for="terms">Terms of Service URL</label>
                         <input type="url" id="terms">
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="imageURLcreate">Logo URL</label>
+                        <input type="url" id="imageURLcreate">
+                    </div>
+
                 </form>
             </div>
             <div class="modal-footer">
@@ -206,6 +216,37 @@ function showKeysModal(clientId) {
   setTimeout(() => modal.classList.add("show"), 50);
 }
 
+function showCreatedKeysModal(clientId, clientSecret) {
+  const modal = document.createElement("div");
+  modal.className = "modal";
+  modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Application Keys</h2>
+                <button class="close" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-group">
+                    <span class="detail-label">Client ID</span>
+                    <span class="detail-value">${clientId}</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Client Secret</span>
+                    <span class="detail-value">${clientSecret}</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal(this)">Close</button>
+            </div>
+        </div>
+    `;
+
+  document.body.appendChild(modal);
+  setTimeout(() => modal.classList.add("show"), 100);
+}
+
 // Create new application
 async function createApplication() {
   const form = document.getElementById("createAppForm");
@@ -214,7 +255,8 @@ async function createApplication() {
     redirectUris: [form.querySelector("#redirectUri").value],
     privacyPolicyUrl: form.querySelector("#privacyPolicy").value,
     termsOfServiceUrl: form.querySelector("#terms").value,
-    allowedScopes: ["profile"], // Default scopes
+    allowedScopes: ["profile"],
+    logoUrl: form.querySelector("#imageURLcreate").value,
   };
 
   try {
@@ -229,8 +271,10 @@ async function createApplication() {
     });
     const data = await response.json();
     applications.push(data);
-    renderApplications();
+    initializeDeveloperSection();
     closeModal(document.querySelector(".modal"));
+    copyToClipboard(data.clientSecret);
+    showCreatedKeysModal(data.clientId, data.clientSecret);
   } catch (error) {
     console.error("Failed to create application:", error);
   }
@@ -305,4 +349,13 @@ function formatTimeAgo(date) {
     (new Date() - new Date(date)) / (1000 * 60 * 60 * 24 * 30)
   );
   return `${months} month${months === 1 ? "" : "s"} ago`;
+}
+
+function copyToClipboard(text) {
+  const el = document.createElement("textarea");
+  el.value = text;
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);
 }

@@ -1,3 +1,13 @@
+function handleRedirectAfterLogin() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const returnTo = urlParams.get("return_to");
+
+  console.log("Redirecting to:", returnTo);
+  if (returnTo) {
+    window.location.href = decodeURIComponent(returnTo);
+  }
+}
+
 // API endpoints configuration
 const API = {
   login: "https://localhost:3000/v1/auth/login",
@@ -9,14 +19,10 @@ const API = {
   mfaSetupSecond: "https://localhost:3000/v1/auth/mfa/setup/verify",
   refresh: "https://localhost:3000/v1/auth/refresh",
   logout: "https://localhost:3000/v1/auth/logout",
+  password: "https://localhost:3000/v1/auth/change-password",
 };
 
 const uap = new UAParser();
-
-// Utility functions
-function showError(message) {
-  alert(message); // In a real application, you'd want to show this in a better way
-}
 
 function switchForm(form) {
   document.getElementById("loginForm").style.display =
@@ -137,8 +143,14 @@ async function loadUserData() {
       );
 
       document.getElementById("userName").textContent = String(data.name);
+      document.getElementById("userName2").textContent = String(data.name);
       document.getElementById("userRole").textContent = new String(data.role);
       document.getElementById("userImage").src =
+        data.image ??
+        encodeURI(
+          `https://ui-avatars.com/api/?name=${data.name}&background=random&length=2&format=svg`
+        );
+      document.getElementById("userPhoto2").src =
         data.image ??
         encodeURI(
           `https://ui-avatars.com/api/?name=${data.name}&background=random&length=2&format=svg`
@@ -157,6 +169,7 @@ async function loadUserData() {
       document.getElementById("disableTwoFactor").style.display =
         twoFactorEnabled ? "block" : "none";
 
+      handleRedirectAfterLogin();
       fetchConnectedDevices();
     }
   } catch (error) {
@@ -288,6 +301,23 @@ function showDeviceDetails(deviceId) {
   // Get device icon based on user agent
   const deviceIcon = getDeviceIcon(device.userAgent);
 
+  let activeStatus = true;
+
+  if (device.lastUsed) {
+    const lastUsedDate = new Date(device.lastUsed);
+    const now = new Date();
+    const diffInMinutes = (now - lastUsedDate) / 1000 / 60;
+
+    if (diffInMinutes > 10) {
+      activeStatus = false;
+    }
+  }
+
+  const statusText = activeStatus ? "Active" : "Offline";
+  const statusBadge = activeStatus
+    ? '<span class="badge badge-success">Active</span>'
+    : '<span class="badge badge-offline">Offline</span>';
+
   modal.innerHTML = `
       <div class="modal-content">
           <div class="modal-header">
@@ -313,11 +343,11 @@ function showDeviceDetails(deviceId) {
               <div class="detail-group">
                   <span class="detail-label">Status</span>
                   <span class="detail-value">
-                      ${
-                        device.revoked
-                          ? '<span class="badge badge-danger">Revoked</span>'
-                          : '<span class="badge badge-success">Active</span>'
-                      }
+                  ${
+                    device.revoked
+                      ? '<span class="badge badge-danger">Revoked</span>'
+                      : statusBadge
+                  }
                   </span>
               </div>
 
@@ -473,7 +503,8 @@ async function handleProfileUpdate(event) {
   }
 }
 
-// 2FA management
+let currentStep = "disableTwoFactor";
+
 async function setupTwoFactor() {
   try {
     const response = await fetch(API.mfaSetup, {
@@ -489,12 +520,35 @@ async function setupTwoFactor() {
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       document.getElementById("qrCode").src = url;
-      document.getElementById("enableTwoFactor").style.display = "none";
-      document.getElementById("twoFactorFlow").style.display = "block";
+      showStep("twoFactorFlow");
       document.getElementById("qrStep").style.display = "block";
     }
   } catch (error) {
     showError("Error setting up 2FA");
+  }
+}
+
+function showStep(step) {
+  document.querySelectorAll(".setup-state").forEach((state) => {
+    state.classList.remove("active");
+  });
+  document.getElementById(step).classList.add("active");
+  currentStep = step;
+
+  if (step === "enableTwoFactor") {
+    document.getElementById("2faStatus").textContent = "Disabled";
+    document.getElementById("2faStatus").style.backgroundColor = "#ff4d4f";
+    document.getElementById("2faStatus").style.color = "#fff";
+  } else if (step === "twoFactorFlow") {
+    document.getElementById("2faStatus").textContent = "Setup";
+    document.getElementById("2faStatus").style.backgroundColor = "#faad14";
+    document.getElementById("2faStatus").style.color = "#000";
+    document.getElementById("secButton").style.display = "none";
+  } else if (step === "disableTwoFactor") {
+    document.getElementById("2faStatus").textContent = "Enabled";
+    document.getElementById("2faStatus").style.backgroundColor = "#52c41a";
+    document.getElementById("2faStatus").style.color = "#fff";
+    document.getElementById("secButton").style.display = "none";
   }
 }
 
@@ -504,7 +558,9 @@ function showVerifyCode() {
 }
 
 async function verifyTwoFactor() {
-  const code = document.getElementById("verificationCode").value;
+  const code = Array.from(document.querySelectorAll(".code-input"))
+    .map((input) => input.value)
+    .join("");
 
   try {
     const response = await fetch(API.mfaSetupSecond, {
@@ -520,8 +576,7 @@ async function verifyTwoFactor() {
     let data = await response.json();
 
     if (response.ok) {
-      document.getElementById("twoFactorFlow").style.display = "none";
-      document.getElementById("disableTwoFactor").style.display = "block";
+      showStep("disableTwoFactor");
       showError("2FA enabled successfully");
     } else {
       showError("Invalid verification code");
@@ -532,22 +587,27 @@ async function verifyTwoFactor() {
 }
 
 async function disableTwoFactor() {
-  try {
-    const response = await fetch(API.mfaSetup, {
-      method: "DELETE",
-      credentials: "include",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+  if (
+    confirm(
+      "Are you sure you want to disable two-factor authentication? This will make your account less secure."
+    )
+  ) {
+    try {
+      const response = await fetch(API.mfaSetup, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
-    if (response.ok) {
-      document.getElementById("disableTwoFactor").style.display = "none";
-      document.getElementById("enableTwoFactor").style.display = "block";
-      showError("2FA disabled successfully");
+      if (response.ok) {
+        showStep("enableTwoFactor");
+        showError("2FA disabled successfully");
+      }
+    } catch (error) {
+      showError("Error disabling 2FA");
     }
-  } catch (error) {
-    showError("Error disabling 2FA");
   }
 }
 
@@ -558,19 +618,21 @@ async function handlePasswordChange(event) {
   const newPassword = document.getElementById("newPassword").value;
 
   try {
-    const response = await fetch(`${API.security}/password`, {
-      method: "PUT",
+    const response = await fetch(`${API.password}`, {
+      method: "PATCH",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
-        currentPassword,
+        oldPassword: currentPassword,
         newPassword,
       }),
     });
 
     if (response.ok) {
+      localStorage.removeItem("tokenExpiry");
       document.getElementById("currentPassword").value = "";
       document.getElementById("newPassword").value = "";
       showError("Password updated successfully");
@@ -696,6 +758,8 @@ async function handleLogin(event) {
         showSuccess("Login successful!");
         switchForm("dashboard");
         document.getElementById("loadingScreen").style.display = "none";
+        loadUserData();
+        handleRedirectAfterLogin();
       } else {
         showError(data.message);
         document.getElementById("loadingScreen").style.display = "none";
@@ -715,10 +779,15 @@ async function handleLogin(event) {
       }
 
       if (response.ok) {
-        localStorage.setItem("token", data.token);
+        localStorage.setItem("token", data.accessToken);
+        const newExpiryTime = new Date(now.getTime() + 10 * 60000);
+        localStorage.setItem("tokenExpiry", newExpiryTime.toISOString());
+
         showSuccess("Login successful!");
+
         switchForm("dashboard");
         loadUserData();
+        handleRedirectAfterLogin();
       } else {
         showError(data.message);
       }
@@ -783,6 +852,8 @@ async function handleLogout() {
     if (response.ok) {
       localStorage.removeItem("token");
       localStorage.removeItem("tokenExpiry");
+      localStorage.removeItem("userId");
+
       showSuccess("Logged out successfully");
       switchForm("login");
     } else {
@@ -1059,13 +1130,6 @@ function closeModal(element) {
   setTimeout(() => modal.remove(), 300);
 }
 
-// Function to show error messages
-function showError(message) {
-  // You can implement this based on your needs
-  console.error(message);
-  // Example: show a toast notification
-  alert(message); // Replace with your preferred error handling
-}
 // Load connected apps when the section becomes visible
 const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
@@ -1084,6 +1148,7 @@ observer.observe(connectedAppsSection, {
 
 document.addEventListener("DOMContentLoaded", () => {
   setupTokenRefresh();
+  initializePrivacySettings();
 
   // Add event listener for create button
   document
@@ -1096,4 +1161,107 @@ document.addEventListener("DOMContentLoaded", () => {
       closeModal(e.target.closest(".modal"));
     }
   });
+
+  // Initialize password strength checker
+  const newPasswordInput = document.getElementById("newPassword");
+  if (newPasswordInput) {
+    checkPasswordStrength(newPasswordInput.value);
+    newPasswordInput.addEventListener("input", function () {
+      checkPasswordStrength(this.value);
+    });
+  }
+
+  // Initialize 2FA state
+  showStep(currentStep);
+
+  // Setup verification code input handling
+  document.querySelectorAll(".code-input").forEach((input, index) => {
+    input.addEventListener("input", function () {
+      if (this.value.length === 1) {
+        const nextInput = document.querySelectorAll(".code-input")[index + 1];
+        if (nextInput) nextInput.focus();
+      }
+    });
+
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Backspace" && !this.value) {
+        const prevInput = document.querySelectorAll(".code-input")[index - 1];
+        if (prevInput) prevInput.focus();
+      }
+    });
+  });
+
+  // Setup password visibility toggles
+  document.querySelectorAll(".password-toggle").forEach((button) => {
+    button.addEventListener("click", function () {
+      const input = this.parentElement.querySelector("input");
+      const icon = this.querySelector("i");
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace("fa-eye", "fa-eye-slash");
+      } else {
+        input.type = "password";
+        icon.classList.replace("fa-eye-slash", "fa-eye");
+      }
+    });
+  });
 });
+
+// Handle password visibility toggle
+document.querySelectorAll(".password-toggle").forEach((button) => {
+  button.addEventListener("click", function () {
+    const input = this.parentElement.querySelector("input");
+    const icon = this.querySelector("i");
+
+    if (input.type === "password") {
+      input.type = "text";
+      icon.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+      input.type = "password";
+      icon.classList.replace("fa-eye-slash", "fa-eye");
+    }
+  });
+});
+
+// Password Management
+function checkPasswordStrength(password) {
+  let strength = 0;
+  const requirements = {
+    length: password.length >= 8,
+    number: /\d/.test(password),
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+    uppercase: /[A-Z]/.test(password),
+  };
+
+  // Update requirement indicators
+  document
+    .querySelectorAll(".password-requirements .requirement")
+    .forEach((req) => {
+      const type = req.textContent.toLowerCase();
+      if (
+        (type.includes("characters") && requirements.length) ||
+        (type.includes("numbers") && requirements.number) ||
+        (type.includes("special") && requirements.special) ||
+        (type.includes("uppercase") && requirements.uppercase)
+      ) {
+        req.classList.add("met");
+        req.querySelector("i").classList.replace("fa-times", "fa-check");
+        strength++;
+      } else {
+        req.classList.remove("met");
+        req.querySelector("i").classList.replace("fa-check", "fa-times");
+      }
+    });
+
+  // Update strength meter
+  const segments = document.querySelectorAll(".strength-segment");
+  const strengthLabel = document.querySelector(".strength-label");
+  segments.forEach((segment, index) => {
+    segment.classList.toggle("active", index < strength);
+  });
+
+  const strengthLabels = ["Weak", "Medium", "Strong", "Very Strong"];
+  strengthLabel.textContent = `Password strength: ${
+    strengthLabels[strength - 1] || "Weak"
+  }`;
+}
