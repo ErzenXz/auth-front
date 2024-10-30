@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TrustPort - Login</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="./src/css/style.css" />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
@@ -16,10 +16,10 @@
       rel="stylesheet"
     />
 
-    <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="shortcut icon" href="/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" href="./src/content/favicon-48x48.png" sizes="48x48" />
+<link rel="icon" type="image/svg+xml" href="./src/content/favicon.svg" />
+<link rel="shortcut icon" href="./src/content/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="./src/content/apple-touch-icon.png" />
 <meta name="apple-mobile-web-app-title" content="TrustPort" />
 <link rel="manifest" href="/site.webmanifest" />
 
@@ -86,8 +86,8 @@
         </div>
         <div class="image">
           <img
-            id="img2"
-            src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            id="img2"  loading="lazy"
+            src=""
             alt="Login"
           />
         </div>
@@ -171,7 +171,7 @@
         <div class="image">
           <img
             id="img1"
-            src="https://images.unsplash.com/photo-1497005367839-6e852de72767?q=80&w=2067&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src=""
             alt="Register"
           />
         </div>
@@ -181,7 +181,7 @@
     <div class="dashboard" id="dashboard" style="display: none">
       <div class="dashboard-sidebar">
         <div class="sidebar-header">
-          <img id="userImage" src="https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg" alt="Profile" />
+          <img id="userImage" loading="lazy" src="https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg" alt="Profile" />
           <h3 id="userName">Welcome, Erzen</h3>
           <p id="userRole">Premium Account</p>
         </div>
@@ -284,7 +284,7 @@
           <div class="profile-header">
             <div class="cover-photo">
               <div class="profile-photo-wrapper">
-                <img id="userPhoto2" src="/api/placeholder/150/150" alt="Profile Photo" class="profile-photo" />
+                <img id="userPhoto2"  loading="lazy" src="/api/placeholder/150/150" alt="Profile Photo" class="profile-photo" />
                 <label for="updateProfilePhoto" class="photo-upload-label">
                   <i class="fas fa-camera"></i>
                 </label>
@@ -534,7 +534,7 @@
                 <div id="twoFactorFlow" class="setup-state">
                   <div id="qrStep" class="qr-setup">
                     <div class="qr-container">
-                      <img id="qrCode" alt="QR Code for 2FA setup" src="/api/placeholder/200/200" />
+                      <img id="qrCode"  loading="lazy" alt="QR Code for 2FA setup" src="/api/placeholder/200/200" />
                     </div>
                     <br>
                     <div class="setup-instructions">
@@ -760,9 +760,8 @@
       <span id="toastMessage"></span>
     </div>
 
-    <script src="toast.js"></script>
-    <script src="developers-page.js"></script>
-    <script src="privacy-page.js"></script>
-    <script src="app.js"></script>
+    <script src="./src/js/developers-page.js"></script>
+    <script src="./src/js/privacy-page.js"></script>
+    <script src="/src/js/app.js"></script>
   </body>
 </html>
