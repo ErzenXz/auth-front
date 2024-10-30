@@ -856,8 +856,12 @@ async function refreshToken() {
    const currentToken = localStorage.getItem("token");
    const tokenExpiry = localStorage.getItem("tokenExpiry");
 
-   // Check if the current token is still valid
-   if (currentToken && tokenExpiry && new Date(tokenExpiry) > new Date()) {
+   // Check if the current token is still valid or is about to expire in the next 1 minute
+   const expiryDate = new Date(tokenExpiry);
+   const now = new Date();
+   const timeDiff = expiryDate - now;
+
+   if (expiryDate > now && timeDiff > 60000) {
       console.log("Current token is still valid");
       return;
    }
@@ -1232,4 +1236,106 @@ function checkPasswordStrength(password) {
 
    const strengthLabels = ["Weak", "Medium", "Strong", "Very Strong"];
    strengthLabel.textContent = `Password strength: ${strengthLabels[strength - 1] || "Weak"}`;
+}
+
+// File input change handler
+document.getElementById("updateProfilePhoto").addEventListener("change", async (event) => {
+   const formData = new FormData();
+   const file = event.target.files[0];
+   formData.append("file", file);
+   let uploadedImageUrl = null;
+
+   try {
+      const response = await fetch("https://localhost:3000/storage/upload", {
+         // Updated endpoint
+         method: "POST",
+         headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         body: formData,
+      });
+
+      if (!response.ok) {
+         throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Create an EventSource to handle SSE
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+         const { value, done } = await reader.read();
+
+         if (done) {
+            showSuccess("Upload completed successfully");
+            await updateProfileImage(uploadedImageUrl);
+            break;
+         }
+
+         const chunk = decoder.decode(value);
+         const messages = chunk
+            .split("\n\n")
+            .filter((msg) => msg.trim() !== "")
+            .map((msg) => msg.replace("data: ", ""));
+
+         for (const msg of messages) {
+            try {
+               const data = JSON.parse(msg);
+
+               if (data.error) {
+                  showError(data.error);
+                  return;
+               }
+
+               // Update progress if the chunk contains progress information
+               if (data.progress) {
+                  updateProgress(data.progress);
+               }
+
+               if (data.url) {
+                  uploadedImageUrl = data.url;
+               }
+            } catch (e) {
+               console.log("Progress update:", msg);
+            }
+         }
+      }
+   } catch (error) {
+      showError(`Upload failed: ${error.message}`);
+   }
+});
+
+// Helper function to update progress
+function updateProgress(progress) {
+   // Assuming you have a progress element
+   const progressBar = document.getElementById("uploadProgress");
+   if (progressBar) {
+      progressBar.value = progress;
+      progressBar.textContent = `${Math.round(progress)}%`;
+      showSuccess(`Upload progress: ${progress}%`);
+   }
+}
+
+async function updateProfileImage(url) {
+   try {
+      const response = await fetch("https://localhost:3000/v1/user/change-profilePicture", {
+         method: "PATCH",
+         credentials: "include",
+         headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+         },
+         body: JSON.stringify({ photo: url }),
+      });
+
+      if (response.ok) {
+         showError("Profile image updated successfully");
+         loadUserData();
+      } else {
+         const data = await response.json();
+         showError(data.message);
+      }
+   } catch (error) {
+      showError("Error updating profile image");
+   }
 }
