@@ -1,6 +1,6 @@
 const PRIVACY_API = {
-  get: "https://localhost:3000/v1/privacy-settings/list",
-  update: "https://localhost:3000/v1/privacy-settings/update",
+  get: "https://api.auth.erzen.xyz/v1/privacy-settings/list",
+  update: "https://api.auth.erzen.xyz/v1/privacy-settings/update",
 };
 
 // Function to fetch privacy settings from the API
