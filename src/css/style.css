@@ -2060,6 +2060,14 @@ textarea.modern-input {
     margin: 5px 0;
   }
 
+  .switch-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .privacy {

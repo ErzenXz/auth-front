@@ -23,6 +23,7 @@ const API = {
   logout: "https://apis.erzen.xyz/v1/auth/logout",
   password: "https://apis.erzen.xyz/v1/auth/change-password",
   events: "https://apis.erzen.xyz/v1/user/events",
+  forgotPassword: "https://apis.erzen.xyz/v1/auth/reset-password",
 };
 
 let eventsArray = [];
@@ -240,7 +241,7 @@ async function loadUserData() {
 
       document.getElementById("userName").textContent = String(data.name);
       document.getElementById("userName2").textContent = String(data.name);
-      document.getElementById("userRole").textContent = new String(data.role);
+      document.getElementById("userRole").textContent = String(data.role);
       document.getElementById("userImage").src =
         data.image ??
         encodeURI(
@@ -519,15 +520,15 @@ function showDeviceDetails(deviceId) {
                   Close
               </button>
               ${
-                !device.revoked
-                  ? `
-                  <button class="btn btn-danger" onclick="revokeAccess('${
-                    device.id
-                  }', '${parseUserAgent(device.userAgent)}')">
-                      Revoke Access
-                  </button>
-              `
-                  : ""
+                device.revoked
+                  ? ""
+                  : `
+                                  <button class="btn btn-danger" onclick="revokeAccess('${
+                                    device.id
+                                  }', '${parseUserAgent(device.userAgent)}')">
+                                      Revoke Access
+                                  </button>
+                              `
               }
           </div>
       </div>
@@ -543,7 +544,9 @@ function showDeviceDetails(deviceId) {
   const closeBtn = modal.querySelector(".close");
   closeBtn.onclick = () => closeModal(modal);
   modal.onclick = (e) => {
-    if (e.target === modal) closeModal(modal);
+    if (e.target === modal) {
+      closeModal(modal);
+    }
   };
 }
 
@@ -835,7 +838,6 @@ async function handleLogin(event) {
       });
 
       const data = await response.json();
-
       if (data) {
         localStorage.setItem("token", data.accessToken);
         const newExpiryTime = new Date(new Date().getTime() + 10 * 60000);
@@ -857,6 +859,7 @@ async function handleLogin(event) {
       });
 
       const data = await response.json();
+      console.log("Login response:", data);
 
       if (data.message === "MFA is required") {
         document.getElementById("mfaGroup").style.display = "block";
@@ -864,7 +867,7 @@ async function handleLogin(event) {
         return;
       }
 
-      if (data) {
+      if (data.statusCode === 200) {
         localStorage.setItem("token", data.accessToken);
         const newExpiryTime = new Date(new Date().getTime() + 10 * 60000);
         localStorage.setItem("tokenExpiry", newExpiryTime.toISOString());
@@ -874,9 +877,9 @@ async function handleLogin(event) {
         switchForm("dashboard");
         loadUserData();
         handleRedirectAfterLogin();
-        console.log("Login successful 222");
       } else {
         showError(data.message);
+        document.getElementById("loadingScreen").style.display = "none";
       }
     }
   } catch (error) {
@@ -960,19 +963,38 @@ async function handleLogout() {
 let img1 = document.getElementById("img1");
 let img2 = document.getElementById("img2");
 
-let images = [
-  "https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1497005367839-6e852de72767?q=80&w=2067&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1727259066904-a7a1e43c6a5d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1474540412665-1cdae210ae6b?q=80&w=2683&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1519752447979-d8e8fb81a74f?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1470164971321-eb5ac2c35f2e?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-  "https://images.unsplash.com/photo-1530053969600-caed2596d242?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+let desktopImages = [
+  "../../src/content/images/1big (Large).png",
+  "../../src/content/images/2big (Large).png",
+  "../../src/content/images/3big (Large).png",
+  "../../src/content/images/4big (Large).png",
+  "../../src/content/images/5big (Large).png",
+  "../../src/content/images/6big (Large).png",
+  "../../src/content/images/7big (Large).png",
 ];
 
+let mobileImages = [
+  "../../src/content/images/1big (Small).png",
+  "../../src/content/images/2big (Small).png",
+  "../../src/content/images/3big (Small).png",
+  "../../src/content/images/4big (Small).png",
+  "../../src/content/images/5big (Small).png",
+  "../../src/content/images/6big (Small).png",
+  "../../src/content/images/7big (Small).png",
+];
+
+let images = window.innerWidth <= 768 ? mobileImages : desktopImages;
 let randomImage = images[Math.floor(Math.random() * images.length)];
 img1.src = randomImage;
 img2.src = randomImage;
+
+// Update images on window resize
+window.addEventListener("resize", () => {
+  images = window.innerWidth <= 768 ? mobileImages : desktopImages;
+  randomImage = images[Math.floor(Math.random() * images.length)];
+  img1.src = randomImage;
+  img2.src = randomImage;
+});
 
 // Function to refresh the token
 async function refreshToken() {
@@ -1216,7 +1238,9 @@ function viewAppDetails(clientId) {
   const closeBtn = modal.querySelector(".close");
   closeBtn.onclick = () => closeModal(modal);
   modal.onclick = (e) => {
-    if (e.target === modal) closeModal(modal);
+    if (e.target === modal) {
+      closeModal(modal);
+    }
   };
 }
 
@@ -1242,6 +1266,34 @@ observer.observe(connectedAppsSection, {
   attributes: true,
   attributeFilter: ["style"],
 });
+
+async function forgotPassword() {
+  const email = document.getElementById("loginEmail").value;
+
+  if (!email || !email.includes("@")) {
+    showError("Please enter your email address");
+    return;
+  }
+
+  try {
+    const response = await fetch(API.forgotPassword, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (response.ok) {
+      showSuccess("Password reset link sent successfully");
+    } else {
+      const data = await response.json();
+      showError(data.message);
+    }
+  } catch (error) {
+    showError("Error sending password reset link");
+  }
+}
 
 document.addEventListener("DOMContentLoaded", async () => {
   const loggedIn = await fastAuthCheck();
