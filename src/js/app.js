@@ -867,7 +867,7 @@ async function handleLogin(event) {
         return;
       }
 
-      if (data.statusCode === 200) {
+      if (data.statusCode === 200 || data.statusCode === 201) {
         localStorage.setItem("token", data.accessToken);
         const newExpiryTime = new Date(new Date().getTime() + 10 * 60000);
         localStorage.setItem("tokenExpiry", newExpiryTime.toISOString());
