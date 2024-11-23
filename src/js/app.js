@@ -867,13 +867,18 @@ async function handleLogin(event) {
         return;
       }
 
-      if (data.statusCode === 200 || data.statusCode === 201) {
+      if (
+        data.statusCode === 200 ||
+        data.statusCode === 201 ||
+        data.message === "User logged in successfully!"
+      ) {
         localStorage.setItem("token", data.accessToken);
         const newExpiryTime = new Date(new Date().getTime() + 10 * 60000);
         localStorage.setItem("tokenExpiry", newExpiryTime.toISOString());
 
         showSuccess("Login successful!");
 
+        subscribeToPush();
         switchForm("dashboard");
         loadUserData();
         handleRedirectAfterLogin();
@@ -1302,7 +1307,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     loadUserData();
     document.getElementById("loadingScreen").style.display = "none";
 
-    setupTokenRefresh();
+    // Make sure setupTokenRefresh is awaited and returns a Promise
+    await new Promise((resolve) => {
+      setupTokenRefresh();
+      resolve();
+    });
+
     initializePrivacySettings();
 
     // Add event listener for create button
@@ -1530,4 +1540,100 @@ async function updateProfileImage(url) {
   } catch (error) {
     showError("Error updating profile image");
   }
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+const applicationServerKey = urlBase64ToUint8Array(
+  "BKOTRpBczQg3BCCj_y50z9ObeWAX81yTsw7yyTo1VPp8LS785eOZNIRdDLpGFFE6l6shlRbgRWCBCfmgIEYJlaM"
+);
+
+// Subscribe to Push Notifications
+async function subscribeToPush() {
+  console.log("Subscribing to push notifications");
+  const registration = await navigator.serviceWorker.ready;
+  const permission = await Notification.requestPermission();
+
+  if (permission !== "granted") {
+    console.log("Notification permission denied");
+    return;
+  }
+
+  const subscription = await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey,
+  });
+
+  // Send subscription to backend
+  const response = await fetch("https://apis.erzen.xyz/messaging/subscribe", {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify(subscription),
+  });
+
+  console.log("Subscription response:", response);
+
+  if (response.ok) {
+    console.log("Subscribed to push notifications");
+  } else {
+    console.error("Failed to subscribe:", response.statusText);
+  }
+}
+
+// Unsubscribe from Push Notifications
+async function unsubscribeFromPush() {
+  const registration = await navigator.serviceWorker.ready;
+  const subscription = await registration.pushManager.getSubscription();
+
+  if (subscription) {
+    // Send unsubscription to backend
+    const response = await fetch(
+      "https://apis.erzen.xyz/messaging/unsubscribe ",
+      {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ endpoint: subscription.endpoint }),
+      }
+    );
+
+    if (response.ok) {
+      await subscription.unsubscribe();
+      console.log("Unsubscribed from push notifications");
+    } else {
+      console.error("Failed to unsubscribe:", response.statusText);
+    }
+  }
+}
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
+    try {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      if (registrations.length === 0) {
+        const registration = await navigator.serviceWorker.register(
+          "/service-worker.js"
+        );
+        console.log("Service Worker registered:", registration);
+      }
+    } catch (error) {
+      console.error("Service Worker registration failed:", error);
+    }
+  });
 }
