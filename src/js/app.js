@@ -12,18 +12,18 @@ let loggedIn = false;
 
 // API endpoints configuration
 const API = {
-  login: "https://apis.erzen.xyz/v1/auth/login",
-  register: "https://apis.erzen.xyz/v1/auth/register",
-  mfaSetup: "https://apis.erzen.xyz/v1/auth/mfa/setup",
-  profile: "https://apis.erzen.xyz/v1/auth/info",
-  security: "https://apis.erzen.xyz/v1/user/active-sessions",
-  mfaVerify: "https://apis.erzen.xyz/v1/auth/mfa/verify",
-  mfaSetupSecond: "https://apis.erzen.xyz/v1/auth/mfa/setup/verify",
-  refresh: "https://apis.erzen.xyz/v1/auth/refresh",
-  logout: "https://apis.erzen.xyz/v1/auth/logout",
-  password: "https://apis.erzen.xyz/v1/auth/change-password",
-  events: "https://apis.erzen.xyz/v1/user/events",
-  forgotPassword: "https://apis.erzen.xyz/v1/auth/reset-password",
+  login: "https://apis.erzen.tk/v1/auth/login",
+  register: "https://apis.erzen.tk/v1/auth/register",
+  mfaSetup: "https://apis.erzen.tk/v1/auth/mfa/setup",
+  profile: "https://apis.erzen.tk/v1/auth/info",
+  security: "https://apis.erzen.tk/v1/user/active-sessions",
+  mfaVerify: "https://apis.erzen.tk/v1/auth/mfa/verify",
+  mfaSetupSecond: "https://apis.erzen.tk/v1/auth/mfa/setup/verify",
+  refresh: "https://apis.erzen.tk/v1/auth/refresh",
+  logout: "https://apis.erzen.tk/v1/auth/logout",
+  password: "https://apis.erzen.tk/v1/auth/change-password",
+  events: "https://apis.erzen.tk/v1/user/events",
+  forgotPassword: "https://apis.erzen.tk/v1/auth/reset-password",
 };
 
 let eventsArray = [];
@@ -1055,7 +1055,7 @@ let connectedAppsArray = [];
 // Function to fetch and display connected applications
 async function loadConnectedApps() {
   try {
-    const response = await fetch("https://apis.erzen.xyz/oauth/applications", {
+    const response = await fetch("https://apis.erzen.tk/oauth/applications", {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
@@ -1140,7 +1140,7 @@ async function revokeAccess(clientId, appName) {
   }
 
   try {
-    const response = await fetch("https://apis.erzen.xyz/oauth/revoke", {
+    const response = await fetch("https://apis.erzen.tk/oauth/revoke", {
       method: "POST",
       credentials: "include",
       headers: {
@@ -1445,7 +1445,7 @@ document
     let uploadedImageUrl = null;
 
     try {
-      const response = await fetch("https://apis.erzen.xyz/storage/upload", {
+      const response = await fetch("https://apis.erzen.tk/storage/upload", {
         // Updated endpoint
         method: "POST",
         headers: {
@@ -1518,7 +1518,7 @@ function updateProgress(progress) {
 async function updateProfileImage(url) {
   try {
     const response = await fetch(
-      "https://apis.erzen.xyz/v1/user/change-profilePicture",
+      "https://apis.erzen.tk/v1/user/change-profilePicture",
       {
         method: "PATCH",
         credentials: "include",
@@ -1574,7 +1574,7 @@ async function subscribeToPush() {
   });
 
   // Send subscription to backend
-  const response = await fetch("https://apis.erzen.xyz/messaging/subscribe", {
+  const response = await fetch("https://apis.erzen.tk/messaging/subscribe", {
     method: "POST",
     credentials: "include",
     headers: {
@@ -1601,7 +1601,7 @@ async function unsubscribeFromPush() {
   if (subscription) {
     // Send unsubscription to backend
     const response = await fetch(
-      "https://apis.erzen.xyz/messaging/unsubscribe ",
+      "https://apis.erzen.tk/messaging/unsubscribe ",
       {
         method: "DELETE",
         credentials: "include",

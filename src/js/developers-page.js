@@ -1,8 +1,8 @@
 const DEV_API = {
-  list: "https://apis.erzen.xyz/oauth/applications/dev",
-  register: "https://apis.erzen.xyz/oauth/applications/register",
-  edit: "https://apis.erzen.xyz/oauth/applications/edit",
-  rotate: "https://apis.erzen.xyz/oauth/applications/rotate-secret",
+  list: "https://apis.erzen.tk/oauth/applications/dev",
+  register: "https://apis.erzen.tk/oauth/applications/register",
+  edit: "https://apis.erzen.tk/oauth/applications/edit",
+  rotate: "https://apis.erzen.tk/oauth/applications/rotate-secret",
 };
 
 // Store for application data

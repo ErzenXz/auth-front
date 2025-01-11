@@ -1,6 +1,6 @@
 const PRIVACY_API = {
-  get: "https://apis.erzen.xyz/v1/privacy-settings/list",
-  update: "https://apis.erzen.xyz/v1/privacy-settings/update",
+  get: "https://apis.erzen.tk/v1/privacy-settings/list",
+  update: "https://apis.erzen.tk/v1/privacy-settings/update",
 };
 
 // Function to fetch privacy settings from the API
