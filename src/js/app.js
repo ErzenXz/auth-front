@@ -17,6 +17,7 @@ const API = {
   mfaSetup: "https://apis.erzen.tk/v1/auth/mfa/setup",
   profile: "https://apis.erzen.tk/v1/auth/info",
   security: "https://apis.erzen.tk/v1/user/active-sessions",
+  revokeAccess: "https://apis.erzen.tk/v1/user/revoke-token",
   mfaVerify: "https://apis.erzen.tk/v1/auth/mfa/verify",
   mfaSetupSecond: "https://apis.erzen.tk/v1/auth/mfa/setup/verify",
   refresh: "https://apis.erzen.tk/v1/auth/refresh",
@@ -254,10 +255,9 @@ async function loadUserData() {
         );
 
       // Calculate and display the security score
-      const securityScore = calculateSecurityScore(data);
       document.getElementById(
         "securityScore"
-      ).textContent = `${securityScore}%`;
+      ).textContent = `${calculateSecurityScore(data)}%`;
 
       // Update 2FA UI
       const twoFactorEnabled = data.multifactorEnabled;
@@ -266,6 +266,7 @@ async function loadUserData() {
       document.getElementById("disableTwoFactor").style.display =
         twoFactorEnabled ? "block" : "none";
 
+      currentStep = twoFactorEnabled ? "disableTwoFactor" : "enableTwoFactor";
       handleRedirectAfterLogin();
       fetchConnectedDevices();
       fetchUserEvents();
@@ -552,11 +553,12 @@ function showDeviceDetails(deviceId) {
 
 async function revokeAccess(deviceId, modal) {
   try {
-    const response = await fetch(`${API.security}/${deviceId}`, {
-      method: "DELETE",
+    const response = await fetch(`${API.revokeAccess}`, {
+      method: "PATCH",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
+      body: JSON.stringify({ token: deviceId }),
       credentials: "include",
     });
 
@@ -603,7 +605,7 @@ async function handleProfileUpdate(event) {
   }
 }
 
-let currentStep = "disableTwoFactor";
+let currentStep = "enableTwoFactor";
 
 async function setupTwoFactor() {
   try {
@@ -1304,7 +1306,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const loggedIn = await fastAuthCheck();
   if (loggedIn) {
     switchForm("dashboard");
-    loadUserData();
+    await loadUserData();
     document.getElementById("loadingScreen").style.display = "none";
 
     // Make sure setupTokenRefresh is awaited and returns a Promise
